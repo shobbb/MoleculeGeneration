@@ -85,7 +85,7 @@ class MoleculeClassification(object):
                 loss_val = loss.data.cpu().numpy()
                 sum_acc += (f_X.max(dim=1)[1] == Y).float().sum().data.cpu().numpy()
                 loss.backward()
-                # deepsets.clip_grad(self.model, 5)
+                deepsets.clip_grad(self.model, 5)
                 self.optimizer.step()
                 del X,Y,f_X,loss
             train_acc = sum_acc/counts
@@ -141,10 +141,10 @@ class MoleculeClassification(object):
         torch.save(self.model.state_dict(), open(f'./models/{self.exp_name}.pt', 'wb'))
 
 if __name__ == "__main__":
-    exp = 'dmps'
+    exp = 'rot_inv_xentp_weighted_predictions'
     t = MoleculeClassification(
         load_model=False, exp_name=exp, fetcher=Qm9Dataset, 
-        weight_xentp=False, model=torch_sigma,
+        weight_xentp=True, model=deepsets.DTanh,
     )
     print("Training for Molecule Atom Classification")
     t.train()
